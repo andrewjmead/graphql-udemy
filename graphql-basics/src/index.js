@@ -3,33 +3,22 @@ import { GraphQLServer } from 'graphql-yoga';
 // Type definitions (schema)
 const typeDefs = `
   type Query {
-    title: String!
-    price: Float!
-    releaseYear: Int
-    rating: Float
-    inStock: Boolean!
+    sumTotal(numbers: [Float!]!): Float!
   }
 `
 
 // Resolvers
 const resolvers = {
     Query: {
-        title() {
-            return 'low beams'
-        },
-        price() {
-            return 2.33
-        },
-        releaseYear() {
-            return null
-        },
-        rating() {
-            return 9.00
-        },
-        inStock() {
-            return true;
+        sumTotal(paretn, args, ctx, info){
+            
+            var x = args.numbers.reduce((acc, elem) => {
+                return acc+elem
+            })
+            console.log(x)
+            return x;
         }
-    },   
+    }
 }
 
 const server = new GraphQLServer({
