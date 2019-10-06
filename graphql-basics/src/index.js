@@ -70,6 +70,7 @@ const typeDefs = `
 // Resolvers
 const resolvers = {
     Query: {
+<<<<<<< HEAD
         users(parent, args, ctx, info) {
             return users
         },
@@ -109,6 +110,42 @@ const resolvers = {
             )
         }
     } 
+=======
+        me() {
+            return {
+                id: 1234,
+                name: 'tom',
+                age: 32,
+                job: 'builder'
+            }
+        },
+        posts(partent, args, ctx, info) {
+            let aPost;
+            if(args.specificPost) {
+                aPost = posts.filter((post) => {
+                    return post.title.toLowerCase().includes(args.specificPost.toLowerCase())
+                })
+            }
+            else {
+                aPost = posts;
+            }
+            return aPost;
+        },
+        users(partent, args, ctx, info) {
+            let theUsers;
+            if(args && args.query) {
+                theUsers = users.filter((element) => {
+                    return element.name.toLowerCase().includes(args.query.toLowerCase())
+                });
+            }
+            else{
+                theUsers = users;
+            }
+            return theUsers;
+
+        }
+    }
+>>>>>>> 52301b68ad525d9b1d1ccc6f7bf6b05673895341
 }
 
 const server = new GraphQLServer({
