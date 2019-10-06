@@ -1,11 +1,28 @@
 import { GraphQLServer } from 'graphql-yoga';
 
+const comments = [
+    {
+        id: 12345,
+        text: 'It does indeed take great skill thanks blue bottle',
+        author: 'blue bottle'
+    },
+    {
+        id: 1234,
+        text: 'Aeropress is simply the best thanks Stumptown you guys are kind of hipster dummies',
+        author: 'Stumptown'
+    },
+    {
+        id: 123,
+        text: 'Not bad, mostly use while camping cause it\'s so easy thanks Coffee guy',
+        author: 'Coffee guy'
+    }
+]
 
 const posts = [
     {
         title: 'how to brew hario V60',
         body: 'with great skill',
-        author: 12345,
+        author: 'blue bottle',
         published: false
     },
     {
@@ -48,7 +65,8 @@ const typeDefs = `
     users: [User!]!
     me: User!
     post: Post!,
-    posts(query: String): [Post!]
+    posts(query: String): [Post!],
+    comments: [Comment!]
   },
 
   type User {
@@ -56,7 +74,8 @@ const typeDefs = `
     name: String!,
     age: Int,
     occupation: String!  
-    posts: [Post!]
+    posts: [Post!],
+    comments: [Comment!]
   },
 
   type Post {
@@ -64,6 +83,12 @@ const typeDefs = `
       body: String,
       author: User!,
       published: Boolean,
+  },
+
+  type Comment {
+      id: Int!,
+      text: String!,
+      author: User!
   }
 `
 
@@ -81,7 +106,7 @@ const resolvers = {
             }
         },
         post(parent, args, ctx, info) {
-            
+            return post
         },
         posts(parent, args, ctx, info) {
             if(!args) {
@@ -90,6 +115,9 @@ const resolvers = {
             return posts.filter((post) => {
                 return post.title.toLowerCase().includes(args.query)
             });
+        },
+        comments(parent, args, ctx, info) {
+            return comments
         }
     },  
     Post: {
@@ -107,8 +135,20 @@ const resolvers = {
             return posts.filter((post) => 
                 post.author === parent.name || post.author === parent.id
             )
+        },
+        comments(parent, args, ctx, info) {
+            return comments.filter((comment) => 
+                comment.author === parent.name
+            )
         }
-    } 
+    },
+    Comment: {
+        author(parent, args, ctx, info) {
+            return users.find((user) => 
+                user.name === parent.author
+            )
+        }
+    }
 }
 
 const server = new GraphQLServer({
